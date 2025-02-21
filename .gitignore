@@ -7,7 +7,7 @@ release.properties
 .flattened-pom.xml
 
 # Eclipse
-.project
+.solverProject
 .classpath
 .settings/
 bin/

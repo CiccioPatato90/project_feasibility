@@ -1,0 +1,84 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package resourceallocation;
+
+service ResourceAllocationService {
+  rpc AllocateResources (AllocationRequest) returns (AllocationResponse);
+  rpc GetAllocationStatus (StatusRequest) returns (StatusResponse);
+  rpc ModifyAllocation (ModificationRequest) returns (AllocationResponse);
+}
+
+message AllocationRequest {
+  repeated Project projects = 1;
+//  repeated ResourceGroup resourceGroups = 2;
+  repeated Resource resources = 2;
+
+  AllocationStrategy strategy = 3;
+}
+
+message Project {
+  string id = 1;
+  string name = 2;
+  map<string, int32> requirements = 3;
+  int32 priority = 4;
+}
+
+message ResourceGroup {
+  string id = 1;
+  string name = 2;
+  repeated Resource resources = 3;
+}
+
+message Resource {
+  string id = 1;
+  string name = 2;
+  int32 capacity = 3;
+  double cost = 4;
+  string groupId = 5;
+}
+
+message AllocationResponse {
+  string allocationId = 1;
+  map<string, ProjectAllocation> projectAllocations = 2;
+  AllocationStatus status = 3;
+}
+
+message StatusRequest {
+  string allocationId = 1;
+}
+
+message StatusResponse {
+  string allocationId = 1;
+  AllocationStatus status = 2;
+  map<string, ProjectAllocation> projectAllocations = 3;
+}
+
+message ModificationRequest {
+  string allocationId = 1;
+  repeated Project projects = 2;
+  repeated ResourceGroup resourceGroups = 3;
+  AllocationStrategy strategy = 4;
+}
+
+message AllocationStrategy {
+  string strategyName = 1;
+  // Add additional fields if needed.
+}
+
+message ProjectAllocation {
+  string projectId = 1;
+  repeated ResourceAllocation resourceAllocations = 2;
+}
+
+message ResourceAllocation {
+  string resourceId = 1;
+  int32 allocatedAmount = 2;
+}
+
+enum AllocationStatus {
+  UNKNOWN = 0;
+  PENDING = 1;
+  COMPLETED = 2;
+  FAILED = 3;
+}
