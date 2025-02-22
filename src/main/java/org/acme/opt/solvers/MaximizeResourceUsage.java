@@ -9,10 +9,10 @@ import lombok.AllArgsConstructor;
 import org.acme.opt.models.SolverProject;
 import org.acme.opt.models.SolverResource;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.util.*;
 
 @AllArgsConstructor
 public class MaximizeResourceUsage {
@@ -20,6 +20,9 @@ public class MaximizeResourceUsage {
     private final List<SolverProject> solverProjects;
 
     public Map<SolverProject, List<SolverResource>> solve() {
+        // Set a fixed seed for reproducibility
+        Random random = new Random(42L);
+
         Loader.loadNativeLibraries();
         MPSolver solver = MPSolver.createSolver("GLOP");
 
@@ -144,6 +147,9 @@ public class MaximizeResourceUsage {
             totalFulfilled += Math.min(fulfilled_amount, required);
         }
 
-        return totalRequirements > 0 ? (totalFulfilled / totalRequirements) * 100 : 100.0;
+        double result = totalRequirements > 0 ? (totalFulfilled / totalRequirements) * 100 : 100.0;
+        return new BigDecimal(result, new MathContext(3, RoundingMode.HALF_UP)).doubleValue();
+
+//        return totalRequirements > 0 ? (totalFulfilled / totalRequirements) * 100 : 100.0;
     }
 }

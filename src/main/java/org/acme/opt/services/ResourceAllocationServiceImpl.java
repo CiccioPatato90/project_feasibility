@@ -55,43 +55,9 @@ public class ResourceAllocationServiceImpl implements ResourceAllocationService 
 
 
         var mapper = new AllocationResponseMapper();
-        var res = mapper.buildAllocationResponse(result);
+//        var res = mapper.buildAllocationResponseNoMetadata(result);
+        var res_metadata = mapper.buildAllocationResponseMetadata(result, resources, projects, solver);
 
-        return Uni.createFrom().item(res);
-    }
-
-    @Override
-    public Uni<StatusResponse> getAllocationStatus(StatusRequest request) {
-        return null;
-    }
-
-    @Override
-    public Uni<AllocationResponse> modifyAllocation(ModificationRequest request) {
-//        String allocationId = request.getAllocationId();
-//
-//        List<SolverResource> resources = request.get().stream()
-//                .map(r -> new SolverResource(r.getName(), r.getCapacity(), (int) r.getCost()))
-//                .toList();
-//        List<SolverProject> projects = request.getProjectsList().stream()
-//                .map(p -> new SolverProject(p.getName(), p.getRequirementsMap()))
-//                .toList();
-//
-//        // Re-run the solver with the modified input.
-//        MaximizeResourceUsage solver = new MaximizeResourceUsage(resources, projects);
-//        Map<SolverProject, List<SolverResource>> result = solver.solve();
-//
-//        // Visualize the updated stats.
-//        ResourceAllocationStats stats = new ResourceAllocationStats(resources, projects, solver);
-//        stats.printAllStats(result);
-//
-//        // Build the updated response.
-//        AllocationResponse response = AllocationResponse.newBuilder()
-//                .setAllocationId(allocationId)
-//                .setStatus(AllocationStatus.COMPLETED)
-//                .build();
-//
-//        allocationCache.put(allocationId, response);
-//        return Uni.createFrom().item(response);
-        return null;
+        return Uni.createFrom().item(res_metadata);
     }
 }

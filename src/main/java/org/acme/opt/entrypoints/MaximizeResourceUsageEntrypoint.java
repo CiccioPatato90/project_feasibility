@@ -131,7 +131,7 @@ public class MaximizeResourceUsageEntrypoint {
 //        stats.printAllStats(result);
 
         var mapper = new AllocationResponseMapper();
-        var res = mapper.buildAllocationResponse(result);
+        var res = mapper.buildAllocationResponseNoMetadata(result);
         System.out.println(res);
     }
 }

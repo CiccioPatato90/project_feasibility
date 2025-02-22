@@ -5,77 +5,65 @@ package resourceallocation;
 
 service ResourceAllocationService {
   rpc AllocateResources (AllocationRequest) returns (AllocationResponse);
-  rpc GetAllocationStatus (StatusRequest) returns (StatusResponse);
-  rpc ModifyAllocation (ModificationRequest) returns (AllocationResponse);
 }
-
+// ALLOCATION REQUEST PROTOs
 message AllocationRequest {
   repeated Project projects = 1;
-//  repeated ResourceGroup resourceGroups = 2;
   repeated Resource resources = 2;
-
   AllocationStrategy strategy = 3;
 }
-
 message Project {
   string id = 1;
   string name = 2;
   map<string, int32> requirements = 3;
   int32 priority = 4;
 }
-
-message ResourceGroup {
-  string id = 1;
-  string name = 2;
-  repeated Resource resources = 3;
-}
-
 message Resource {
   string id = 1;
   string name = 2;
   int32 capacity = 3;
   double cost = 4;
-  string groupId = 5;
+}
+message AllocationStrategy {
+  string strategyName = 1;
 }
 
+
+// ALLOCATION RESPONSE PROTOs
 message AllocationResponse {
   string allocationId = 1;
   map<string, ProjectAllocation> projectAllocations = 2;
   AllocationStatus status = 3;
+  AllocationStats global_stats = 4;
+  map<string, ProjectStats> project_stats = 5;  // projectId -> stats
 }
-
-message StatusRequest {
-  string allocationId = 1;
-}
-
-message StatusResponse {
-  string allocationId = 1;
-  AllocationStatus status = 2;
-  map<string, ProjectAllocation> projectAllocations = 3;
-}
-
-message ModificationRequest {
-  string allocationId = 1;
-  repeated Project projects = 2;
-  repeated ResourceGroup resourceGroups = 3;
-  AllocationStrategy strategy = 4;
-}
-
-message AllocationStrategy {
-  string strategyName = 1;
-  // Add additional fields if needed.
-}
-
 message ProjectAllocation {
   string projectId = 1;
   repeated ResourceAllocation resourceAllocations = 2;
 }
-
 message ResourceAllocation {
   string resourceId = 1;
   int32 allocatedAmount = 2;
 }
-
+message AllocationStats {
+  // Global statistics
+  int32 total_resources_available = 1;
+  int32 total_resources_used = 2;
+  double average_resources_per_project = 3;
+  int32 unused_resources = 4;
+  // Most/least used resources insights
+  message ResourceUsage {
+    string resource_id = 1;
+    int32 usage_count = 2;
+  }
+  ResourceUsage most_assigned_resource = 5;
+  ResourceUsage least_assigned_resource = 6;
+}
+message ProjectStats {
+  double completion_percentage = 1;
+  int32 assigned_resource_count = 2;
+  map<string, int32> missing_resources = 3;  // resourceId -> count needed
+}
 enum AllocationStatus {
   UNKNOWN = 0;
   PENDING = 1;
