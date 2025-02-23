@@ -52,8 +52,6 @@ public class GreedyAssignmentSolver implements BaseSolver{
             double completion = calculateProjectCompletion(project, assigned);
             project.setCompletionRate(String.valueOf(completion));
             allocation.put(project, assigned);
-            System.out.printf("Project %s: Completion = %.2f%%, Resources Assigned = %d%n",
-                    project.getName(), completion, assigned.size());
         }
 
         return allocation;
@@ -62,26 +60,21 @@ public class GreedyAssignmentSolver implements BaseSolver{
     private List<SolverResource> findResourcesForProject(SolverProject project, Map<String, Integer> availableResources) {
         List<SolverResource> assignedResources = new ArrayList<>();
         Map<String, Integer> projectRequirements = new HashMap<>(project.getRequirements());
-//        Map<String, Integer> assignMap = new HashMap<>();
-        // Try to fulfill each requirement
+
+
         for (Map.Entry<String, Integer> requirement : projectRequirements.entrySet()) {
             String neededResourceId = requirement.getKey();
-            int needed = requirement.getValue();
 
             // Find matching resources
             var availableQuantity = availableResources.get(neededResourceId);
 
             if(availableQuantity != null){
-                if (needed > 0 && availableQuantity >= needed) {
-//                try like this otherwise we change it if name cannot be empty
-//                STRATEGY: IF WE HAVE ENOUGH AVAILABLE, WE ASSIGN IT ALL
-                    assignedResources.add(new SolverResource(neededResourceId, "", needed, 0));
-                    availableResources.put(neededResourceId, availableQuantity - needed);
-                    break;
-                }else if(availableQuantity <= needed){
+                if (requirement.getValue() > 0 && availableQuantity >= requirement.getValue()) {
+                    assignedResources.add(new SolverResource(neededResourceId, "", requirement.getValue(), 0));
+                    availableResources.put(neededResourceId, availableQuantity - requirement.getValue());
+                }else if(availableQuantity <= requirement.getValue()){
                     assignedResources.add(new SolverResource(neededResourceId, "", availableQuantity, 0));
                     availableResources.remove(neededResourceId);
-                    break;
                 }
             }
 

@@ -57,8 +57,8 @@ public class ResourceAllocationServiceImpl implements ResourceAllocationService 
 
         var stats = new ResourceAllocationStats(resources, projects, solver);
 
-//        stats.printAllStats(result);
-//        stats.exportAllocationStatsToCsv(result, "greedy-"+strategy.strategy().name() +"-"+strategy.order().name()+".csv");
+        stats.printAllStats(result);
+        stats.exportAllocationStatsToCsv(result, "greedy-"+strategy.strategy().name() +"-"+strategy.order().name()+".csv");
 
         var mapper = new AllocationResponseMapper();
         var res_metadata = mapper.buildAllocationResponseMetadata(result, resources, projects, solver);
