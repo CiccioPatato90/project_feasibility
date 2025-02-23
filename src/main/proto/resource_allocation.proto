@@ -4,7 +4,8 @@ option java_multiple_files = true;
 package resourceallocation;
 
 service ResourceAllocationService {
-  rpc AllocateResources (AllocationRequest) returns (AllocationResponse);
+  rpc AllocateResourcesLinearProgramming (AllocationRequest) returns (AllocationResponse);
+  rpc AllocateResourcesGreedy (AllocationRequest) returns (AllocationResponse);
 }
 // ALLOCATION REQUEST PROTOs
 message AllocationRequest {
@@ -24,8 +25,20 @@ message Resource {
   int32 capacity = 3;
   double cost = 4;
 }
+enum GreedyCriteria {
+  DEFAULT_CRITERIA = 0;
+  PROJECT_SIZE = 1;
+  ASSOCIATION_ACTIVITY = 2;
+  CREATION_DATE = 3;
+}
+enum GreedyCriteriaOrder {
+  DEFAULT_ORDER = 0;
+  LARGEST_FIRST = 1;
+  SMALLEST_FIRST = 2;
+}
 message AllocationStrategy {
-  string strategyName = 1;
+  GreedyCriteria criteria = 1;
+  GreedyCriteriaOrder order = 2;
 }
 
 

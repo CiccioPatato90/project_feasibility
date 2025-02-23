@@ -5,6 +5,8 @@ import io.smallrye.mutiny.Uni;
 import org.acme.opt.mappers.AllocationResponseMapper;
 import org.acme.opt.models.SolverProject;
 import org.acme.opt.models.SolverResource;
+import org.acme.opt.models.SolverStrategy;
+import org.acme.opt.solvers.GreedyAssignmentSolver;
 import org.acme.opt.solvers.MaximizeResourceUsage;
 import org.acme.opt.stats.ResourceAllocationStats;
 import resourceallocation.*;
@@ -17,45 +19,48 @@ import java.util.stream.Collectors;
 public class ResourceAllocationServiceImpl implements ResourceAllocationService {
 
     @Override
-    public Uni<AllocationResponse> allocateResources(AllocationRequest request) {
-
+    public Uni<AllocationResponse> allocateResourcesLinearProgramming(AllocationRequest request) {
         List<SolverResource> resources = request.getResourcesList().stream()
                 .map(r -> new SolverResource(r.getId(), r.getName(), r.getCapacity(), (int) r.getCost()))
                 .toList();
         List<SolverProject> projects = request.getProjectsList().stream()
-                .map(p -> new SolverProject("", p.getId(), p.getName(), p.getRequirementsMap()))
+                .map(p -> new SolverProject("", p.getId(), p.getName(), p.getRequirementsMap(), p.getPriority()))
                 .toList();
         // Call the algorithm.
+
         MaximizeResourceUsage solver = new MaximizeResourceUsage(resources, projects);
         Map<SolverProject, List<SolverResource>> result = solver.solve();
 
         var stats = new ResourceAllocationStats(resources, projects, solver);
 
-        stats.printAllStats(result);
-//
-//        // Build response.
-//        SolveResponse.Builder responseBuilder = SolveResponse.newBuilder();
-//        for (Map.Entry<Project, List<Resource>> entry : result.entrySet()) {
-//            Assignment.Builder assignBuilder = Assignment.newBuilder()
-//                    .setProjectName(entry.getKey().getName())
-//                    .setCompletion(solver.calculateProjectCompletion(entry.getKey(), entry.getValue()));
-//            for (Resource res : entry.getValue()) {
-//                ResourceMessage resMsg = ResourceMessage.newBuilder()
-//                        .setName(res.getName())
-//                        .setAvailableCapacity(res.getAvailableCapacity())
-//                        .setCost(res.getCost())
-//                        .build();
-//                assignBuilder.addAssignedResources(resMsg);
-//            }
-//            responseBuilder.addAssignments(assignBuilder.build());
-//        }
-//
-//        responseObserver.onNext(responseBuilder.build());
-//        responseObserver.onCompleted();
-
+//        stats.exportAllocationStatsToCsv(result, "linear_programming.csv");
+//        stats.printAllStats(result);
 
         var mapper = new AllocationResponseMapper();
-//        var res = mapper.buildAllocationResponseNoMetadata(result);
+        var res_metadata = mapper.buildAllocationResponseMetadata(result, resources, projects, solver);
+        return Uni.createFrom().item(res_metadata);
+    }
+
+    @Override
+    public Uni<AllocationResponse> allocateResourcesGreedy(AllocationRequest request) {
+        List<SolverResource> resources = request.getResourcesList().stream()
+                .map(r -> new SolverResource(r.getId(), r.getName(), r.getCapacity(), (int) r.getCost()))
+                .toList();
+        List<SolverProject> projects = request.getProjectsList().stream()
+                .map(p -> new SolverProject("", p.getId(), p.getName(), p.getRequirementsMap(), p.getPriority()))
+                .toList();
+        SolverStrategy strategy = SolverStrategy.fromProto(request.getStrategy());
+
+        GreedyAssignmentSolver solver = new GreedyAssignmentSolver(resources, projects, strategy);
+
+        Map<SolverProject, List<SolverResource>> result = solver.solve();
+
+        var stats = new ResourceAllocationStats(resources, projects, solver);
+
+//        stats.printAllStats(result);
+//        stats.exportAllocationStatsToCsv(result, "greedy-"+strategy.strategy().name() +"-"+strategy.order().name()+".csv");
+
+        var mapper = new AllocationResponseMapper();
         var res_metadata = mapper.buildAllocationResponseMetadata(result, resources, projects, solver);
 
         return Uni.createFrom().item(res_metadata);

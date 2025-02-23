@@ -14,6 +14,7 @@ public class SolverProject {
     private final String id;
     private final String name;
     private final Map<String, Integer> resourceRequirements;
+    private final int priority;
 
     public Map<String, Integer> getRequirements() { return Collections.unmodifiableMap(resourceRequirements); }
 }

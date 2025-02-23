@@ -50,7 +50,7 @@ public class ProjectGenerator {
                 int maxReq = (int) (capacity * utilizationTarget / numProjects);
                 requirements.put(solverResource.getName(), maxReq + random.nextInt(maxReq/2));
             }
-            solverProjects.add(new SolverProject("", "proj"+i,"Project" + i, requirements));
+            solverProjects.add(new SolverProject("", "proj"+i,"Project" + i, requirements, i));
         }
     }
 
@@ -68,7 +68,7 @@ public class ProjectGenerator {
                 int maxReq = (int) (capacity * utilizationTarget);
                 requirements.put(solverResource.getName(), maxReq + random.nextInt(maxReq/2));
             }
-            solverProjects.add(new SolverProject("", "proj"+i,"Project" + i, requirements));
+            solverProjects.add(new SolverProject("", "proj"+i,"Project" + i, requirements, i));
         }
     }
 
@@ -106,7 +106,7 @@ public class ProjectGenerator {
                 }
             }
 
-            solverProjects.add(new SolverProject("", "proj"+i,"Project" + i, requirements));
+            solverProjects.add(new SolverProject("", "proj"+i,"Project" + i, requirements, i));
         }
     }
 
@@ -134,7 +134,7 @@ public class ProjectGenerator {
                 }
             }
 
-            solverProjects.add(new SolverProject("", "proj"+i,"Project" + i, requirements));
+            solverProjects.add(new SolverProject("", "proj"+i,"Project" + i, requirements, i));
         }
     }
 
@@ -158,7 +158,7 @@ public class ProjectGenerator {
                 requirements.put(solverResource.getName(), maxReq + random.nextInt(maxReq/2));
             }
 
-            solverProjects.add(new SolverProject("", "proj"+i,"Project" + i, requirements));
+            solverProjects.add(new SolverProject("", "proj"+i,"Project" + i, requirements, i % 9));
         }
     }
 

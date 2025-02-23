@@ -2,6 +2,7 @@ package org.acme.opt.mappers;
 
 import org.acme.opt.models.SolverProject;
 import org.acme.opt.models.SolverResource;
+import org.acme.opt.solvers.BaseSolver;
 import org.acme.opt.solvers.MaximizeResourceUsage;
 import resourceallocation.*;
 
@@ -47,7 +48,7 @@ public class AllocationResponseMapper {
         return allocationResponseBuilder.build();
     }
 
-    public AllocationResponse buildAllocationResponseMetadata(Map<SolverProject, List<SolverResource>> result, List<SolverResource> resources, List<SolverProject> projects, MaximizeResourceUsage solver) {
+    public AllocationResponse buildAllocationResponseMetadata(Map<SolverProject, List<SolverResource>> result, List<SolverResource> resources, List<SolverProject> projects, BaseSolver solver) {
         // First build the base response without metadata
         AllocationResponse.Builder responseBuilder = AllocationResponse.newBuilder(buildAllocationResponseNoMetadata(result));
 
