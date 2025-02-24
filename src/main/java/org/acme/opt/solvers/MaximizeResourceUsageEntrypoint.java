@@ -4,6 +4,9 @@ import org.acme.opt.generators.ProjectGenerator;
 import org.acme.opt.generators.ResourceGenerator;
 import org.acme.opt.models.SolverProject;
 import org.acme.opt.models.SolverResource;
+import org.acme.opt.models.SolverStrategy;
+import org.acme.opt.models.enums.GreedyOrder;
+import org.acme.opt.models.enums.GreedyStrategy;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +32,10 @@ public class MaximizeResourceUsageEntrypoint {
         List<SolverResource> solverResources = resourceGen.generate();
         List<SolverProject> solverProjects = projectGen.generate();
 
+        SolverStrategy strategy = new SolverStrategy(GreedyStrategy.PROJECT_SIZE, GreedyOrder.LARGEST_FIRST);
+
         // Solve feasibility
-        var solver = new MaximizeResourceUsage(solverResources, solverProjects);
+        var solver = new GreedyAssignmentSolver(solverResources, solverProjects, strategy);
         var result = solver.solve();
 
         // Added Code: Unified Statistics Summary

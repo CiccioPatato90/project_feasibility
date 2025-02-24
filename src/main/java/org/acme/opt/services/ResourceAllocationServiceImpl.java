@@ -31,8 +31,7 @@ public class ResourceAllocationServiceImpl implements ResourceAllocationService 
         MaximizeResourceUsage solver = new MaximizeResourceUsage(resources, projects);
         Map<SolverProject, List<SolverResource>> result = solver.solve();
 
-        var stats = new ResourceAllocationStats(resources, projects, solver);
-
+//        var stats = new ResourceAllocationStats(resources, projects, solver);
 //        stats.exportAllocationStatsToCsv(result, "linear_programming.csv");
 //        stats.printAllStats(result);
 
@@ -55,10 +54,9 @@ public class ResourceAllocationServiceImpl implements ResourceAllocationService 
 
         Map<SolverProject, List<SolverResource>> result = solver.solve();
 
-        var stats = new ResourceAllocationStats(resources, projects, solver);
-
-        stats.printAllStats(result);
-        stats.exportAllocationStatsToCsv(result, "greedy-"+strategy.strategy().name() +"-"+strategy.order().name()+".csv");
+//        var stats = new ResourceAllocationStats(resources, projects, solver);
+//        stats.printAllStats(result);
+//        stats.exportAllocationStatsToCsv(result, "greedy-"+strategy.strategy().name() +"-"+strategy.order().name()+".csv");
 
         var mapper = new AllocationResponseMapper();
         var res_metadata = mapper.buildAllocationResponseMetadata(result, resources, projects, solver);
